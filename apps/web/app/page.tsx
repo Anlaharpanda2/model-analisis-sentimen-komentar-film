@@ -23,12 +23,19 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!comment.trim()) {
+      setError('Komentar tidak boleh kosong.');
+      return;
+    }
+
     setLoading(true);
     setResult('');
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/api/predict/', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/api/predict/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

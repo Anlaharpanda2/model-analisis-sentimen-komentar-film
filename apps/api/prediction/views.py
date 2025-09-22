@@ -3,51 +3,40 @@ import joblib
 import os
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from pathlib import Path
-
 from django.conf import settings
-
-PROJECT_ROOT = settings.BASE_DIR
 
 @csrf_exempt
 def predict(request):
-    if request.method == 'POST':
-        try:
-            body_unicode = request.body.decode('utf-8')
-            data = json.loads(body_unicode)
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
 
-            comment = data.get('comment')
-            model_name = data.get('model_name')
+    try:
+        # 1. Parse data
+        data = json.loads(request.body)
+        comment = data.get('comment')
+        model_name = data.get('model_name')
 
-            if not comment or not model_name:
-                return JsonResponse({
-                    'error': "Missing 'comment' or 'model_name' in request body.",
-                    'received_data': data
-                }, status=400)
+        if not comment or not model_name:
+            return JsonResponse({'error': "Missing 'comment' or 'model_name'"}, status=400)
 
-            filename_prefix = model_name.replace('-', '_')
-            model_path = os.path.join(PROJECT_ROOT, 'model', model_name, f'{filename_prefix}_model.pkl')
-            vectorizer_path = os.path.join(PROJECT_ROOT, 'model', model_name, 'tfidf_vectorizer.pkl')
+        # 2. Construct paths
+        filename_prefix = model_name.replace('-', '_')
+        model_path = os.path.join(settings.BASE_DIR, 'model', model_name, f'{filename_prefix}_model.pkl')
+        vectorizer_path = os.path.join(settings.BASE_DIR, 'model', model_name, 'tfidf_vectorizer.pkl')
 
-            if not os.path.exists(model_path) or not os.path.exists(vectorizer_path):
-                error_message = f'Model files not found for {model_name}. Searched at: {model_path}'
-                return JsonResponse({'error': error_message}, status=404)
+        if not os.path.exists(model_path) or not os.path.exists(vectorizer_path):
+            return JsonResponse({'error': f'Model files not found for {model_name}'}, status=404)
 
-            model = joblib.load(model_path)
-            vectorizer = joblib.load(vectorizer_path)
+        # 3. Load model and predict
+        model = joblib.load(model_path)
+        vectorizer = joblib.load(vectorizer_path)
+        transformed_comment = vectorizer.transform([comment])
+        prediction = model.predict(transformed_comment)
 
-            transformed_comment = vectorizer.transform([comment])
-            prediction = model.predict(transformed_comment)
+        # 4. Return result
+        sentiment = prediction[0]
+        return JsonResponse({'sentiment': sentiment})
 
-            sentiment = prediction[0]
-            return JsonResponse({'sentiment': sentiment})
-
-        except json.JSONDecodeError:
-            return JsonResponse({
-                'error': 'Invalid JSON received.',
-                'request_body': request.body.decode('utf-8', errors='ignore')
-            }, status=400)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
+    except Exception as e:
+        # If anything fails, return a generic 500 error
+        return JsonResponse({'error': f'An unexpected error occurred: {str(e)}'}, status=500)

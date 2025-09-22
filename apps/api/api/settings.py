@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-(h+0hrt8j&5za%3++2@p^leac!6!*%7qyn)n!+*dnv=6$=ope7
 # Set DEBUG to False for production
 DEBUG = False
 
-ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # For production, you should restrict this to your frontend's domain
@@ -49,7 +49,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'prediction.middleware.JsonErrorMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', # Whitenoise middleware
     'corsheaders.middleware.CorsMiddleware',
