@@ -34,14 +34,22 @@ export default function Home() {
       const confidenceAnimation = setInterval(() => {
         setConfidence(prev => prev < 95 ? prev + Math.random() * 5 : 95);
       }, 100);
+      
+      // --- PERUBAHAN UTAMA DI SINI ---
+      // 1. Ambil base URL dari environment variable.
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      
+      // 2. Buat URL lengkap dengan endpoint.
+      const fullUrl = `${apiUrl}/api/predict/`;
 
-      const response = await fetch('https://model-analisis-sentimen-komentar-film-git-main-thirt-wave.vercel.app/api/predict/', {
+      const response = await fetch(fullUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ comment, model_name: model }),
       });
+      // --- AKHIR PERUBAHAN ---
 
       clearInterval(confidenceAnimation);
 
