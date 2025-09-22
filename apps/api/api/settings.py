@@ -37,6 +37,7 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOW_HEADERS = [
     '*',
 ]
+CORS_ALLOW_CREDENTIALS = True
 # CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition

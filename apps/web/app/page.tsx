@@ -35,7 +35,7 @@ export default function Home() {
         setConfidence(prev => prev < 95 ? prev + Math.random() * 5 : 95);
       }, 100);
 
-      const response = await fetch('http://localhost:8000/api/predict/', {
+      const response = await fetch('https://model-analisis-sentimen-komentar-film-git-main-thirt-wave.vercel.app/api/predict/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
