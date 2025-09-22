@@ -30,8 +30,13 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 
-# For production, you should restrict this to your frontend's domain
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_METHODS = [
+    '*',
+]
+CORS_ALLOW_HEADERS = [
+    '*',
+]
 # CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
