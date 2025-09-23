@@ -37,9 +37,12 @@ export default function Home() {
       
       // --- PERUBAHAN UTAMA DI SINI ---
       // 1. Ambil base URL dari environment variable.
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const apiPath = process.env.NEXT_PUBLIC_API_PATH || '/api/predict/';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const apiPath = '/api/predict/';
       
+      if (!apiUrl) {
+        throw new Error('API URL is not defined. Please set NEXT_PUBLIC_API_URL in your environment variables.');
+      }
       // Normalize URL to prevent double slashes
       const fullApiUrl = `${apiUrl.replace(/\/$/, '')}${apiPath}`;
 
