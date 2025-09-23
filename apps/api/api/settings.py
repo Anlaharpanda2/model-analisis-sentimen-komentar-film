@@ -41,6 +41,7 @@ CORS_ALLOW_HEADERS = [
     '*',
 ]
 CORS_ALLOW_CREDENTIALS = True
+CORS_PREFLIGHT_MAX_AGE = 86400 # Cache preflight for 24 hours
 # CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
