@@ -30,7 +30,13 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 
-CORS_ALLOW_ALL_ORIGINS = True
+# Konfigurasi CORS yang lebih permisif untuk produksi Vercel
+CORS_ALLOWED_ORIGINS = [] # Kosongkan ini jika menggunakan regex
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$", # Mengizinkan semua subdomain Vercel
+    r"^http://localhost:\d+$", # Mengizinkan localhost untuk pengembangan
+    r"^http://127\.0\.0\.1:\d+$", # Mengizinkan 127.0.0.1 untuk pengembangan
+]
 CORS_ALLOW_METHODS = [
     '*',
 ]
@@ -39,7 +45,12 @@ CORS_ALLOW_HEADERS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_PREFLIGHT_MAX_AGE = 86400 # Cache preflight for 24 hours
-# CORS_ALLOW_ALL_ORIGINS = True
+
+# CSRF Trusted Origins untuk Vercel
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.vercel.app",
+    "http://localhost:*"
+]
 
 # Application definition
 
@@ -62,7 +73,6 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'prediction.middleware.SkipAuthForOptionsMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
