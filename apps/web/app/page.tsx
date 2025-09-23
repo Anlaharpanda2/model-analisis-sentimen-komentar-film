@@ -37,12 +37,13 @@ export default function Home() {
       
       // --- PERUBAHAN UTAMA DI SINI ---
       // 1. Ambil base URL dari environment variable.
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const apiPath = process.env.NEXT_PUBLIC_API_PATH || '/api/predict/';
       
-      // 2. Buat URL lengkap dengan endpoint.
-      const fullUrl = `${apiUrl}/api/predict/`;
+      // Normalize URL to prevent double slashes
+      const fullApiUrl = `${apiUrl.replace(/\/$/, '')}${apiPath}`;
 
-      const response = await fetch(fullUrl, {
+      const response = await fetch(fullApiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
