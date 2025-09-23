@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AnonymousUser
-from django.contrib.sessions.backends.base import SessionBase
+from django.contrib.sessions.backends.db import SessionStore # Use a concrete session store
 
 class SkipAuthForOptionsMiddleware:
     def __init__(self, get_response):
@@ -9,7 +9,8 @@ class SkipAuthForOptionsMiddleware:
         if request.method == 'OPTIONS':
             # Bypass authentication for OPTIONS requests
             request.user = AnonymousUser()
-            request.session = SessionBase() # Provide a dummy session object
+            # Provide a concrete, empty session object
+            request.session = SessionStore(session_key=None)
         
         response = self.get_response(request)
         return response
